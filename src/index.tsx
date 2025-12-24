@@ -4,10 +4,17 @@ import type { Bindings } from './types'
 import { count } from 'drizzle-orm'
 import { entries } from './db/schema'
 import { database } from './db/client'
+import { jwk } from 'hono/jwk'
 
 const app = new Hono<{ Bindings: Bindings }>()
 
 app.use(renderer)
+app.use(
+  '/entries',
+  jwk({
+    jwks_uri: 'https://keeplater.kinde.com/.well-known/jwks.json',
+  })
+)
 
 app.get('/entries', async (c) => {
   const db = database(c.env.DATABASE_URL)
