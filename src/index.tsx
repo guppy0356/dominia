@@ -12,7 +12,8 @@ app.use(renderer)
 app.use(
   '/entries',
   jwk({
-    jwks_uri: 'https://keeplater.kinde.com/.well-known/jwks.json',
+    jwks_uri: (c) =>
+      c.env.JWKS_URI ?? 'https://keeplater.kinde.com/.well-known/jwks.json',
   })
 )
 
