@@ -1,6 +1,7 @@
 import { neonConfig, Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
 import ws from "ws";
+import * as schema from "./schema";
 
 export function database(connectionString: string) {
   const pool = new Pool({ connectionString });
@@ -12,5 +13,5 @@ export function database(connectionString: string) {
     host === "db.localtest.me" ? `${host}:4444/v2` : `${host}/v2`;
   neonConfig.webSocketConstructor = ws;
 
-  return drizzle({ client: pool });
+  return drizzle(pool, { schema: schema });
 }
