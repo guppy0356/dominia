@@ -1,8 +1,17 @@
+import dotenv from "dotenv";
+import dotenvExpand from "dotenv-expand";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 
-const BASE_URL = "postgres://postgres:postgres@db.localtest.me:5432";
+const env = dotenv.config();
+dotenvExpand.expand(env);
+
+const DATABASE_URL = process.env.DATABASE_URL;
+
+if (!DATABASE_URL) {
+  throw new Error("DATABASE_URL is not defined in environment variables");
+}
 const DB_NAMES = ["test_1", "test_2", "test_3", "test_4"];
 const MIGRATIONS_FOLDER = "./src/db/migrations";
 
@@ -10,7 +19,7 @@ async function prepareTestDatabases() {
   console.log("Starting test database preparation...\n");
 
   console.log("Creating databases...");
-  const adminSql = postgres(`${BASE_URL}/postgres`);
+  const adminSql = postgres(`${DATABASE_URL}/postgres`);
 
   for (const dbName of DB_NAMES) {
     try {
@@ -32,7 +41,7 @@ async function prepareTestDatabases() {
   console.log("\nApplying migrations...");
 
   for (const dbName of DB_NAMES) {
-    const sql = postgres(`${BASE_URL}/${dbName}`, { max: 1 });
+    const sql = postgres(`${DATABASE_URL}/${dbName}`, { max: 1 });
 
     const db = drizzle(sql);
 
