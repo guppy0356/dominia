@@ -9,7 +9,8 @@
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "hono:env": "tsx src/scripts/generate-dev-vars.ts",
     "test": "vitest run",
-    "test:prepare": "tsx test/prepare.ts"
+    "test:prepare": "tsx test/prepare.ts",
+    "db:drop": "tsx src/db/scripts/drop.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
