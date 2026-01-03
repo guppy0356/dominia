@@ -2,7 +2,7 @@ import fs from "node:fs";
 import dotenv from "dotenv";
 import { expand } from "dotenv-expand";
 import { z } from "zod";
-import { parseEnv } from "../types";
+import { parseEnv } from "../../src/types";
 
 const envConfig = dotenv.config();
 expand(envConfig);
