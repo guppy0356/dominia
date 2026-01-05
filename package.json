@@ -8,6 +8,8 @@
     "deploy": "$npm_execpath run build && wrangler deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "hono:env": "tsx scripts/dev/generate-dev-vars.ts",
+    "db:migrate": "npx drizzle-kit migrate",
+    "test:prepare": "npx drizzle-kit migrate --config=drizzle.test.config.ts",
     "test": "vitest run"
   },
   "dependencies": {
