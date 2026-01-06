@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
 import { defineConfig } from "drizzle-kit";
 
-const env = dotenv.config();
+const env = dotenv.config({ path: ".env.test" });
 dotenvExpand.expand(env);
 
 export default defineConfig({
@@ -10,6 +10,6 @@ export default defineConfig({
   out: "./src/db/migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_TEST_URL ?? "",
+    url: process.env.DATABASE_URL ?? "",
   },
 });
