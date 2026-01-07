@@ -2,7 +2,7 @@ import fs from "node:fs";
 import dotenv from "dotenv";
 import { expand } from "dotenv-expand";
 import { z } from "zod";
-import { parseEnv } from "../../src/types";
+import { parseEnv } from "../src/types";
 
 function generateDevVars(envPath: string, outputPath: string) {
   // Create a clean environment for this file
