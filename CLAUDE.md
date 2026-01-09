@@ -9,7 +9,8 @@
 src/
 ├── routes/
 │   └── entries/
-│       └── index.tsx     # Entries routes sub-app (GET, POST, etc.)
+│       ├── index.tsx         # Entries routes sub-app (GET, POST, etc.)
+│       └── index.test.ts     # Colocated integration tests
 ├── middleware/
 │   ├── renderer.tsx      # JSX Renderer middleware
 │   └── auth.ts           # JWT authentication config
@@ -23,8 +24,7 @@ src/
 test/
 ├── helpers/
 │   └── jwt.ts            # JWT/Auth mocking helpers
-├── index.test.ts         # Main integration tests
-└── env.d.ts
+└── env.d.ts              # Test type definitions
 scripts/                  # Utilities (db-clean, env-gen)
 docker/                   # Local dev infrastructure (Caddy, Postgres)
 docs/                     # Detailed architecture docs (See below)

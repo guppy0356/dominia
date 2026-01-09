@@ -33,7 +33,7 @@ Protected endpoints are tested using helper utilities in `test/helpers/jwt.ts`.
 * **`npm test`**: Runs the full test suite.
 
 ### Example Test Structure
-Refer to `test/index.test.ts` for a complete example.
+Refer to `src/routes/entries/index.test.ts` for a complete example.
 
 ```typescript
 beforeEach(() => {

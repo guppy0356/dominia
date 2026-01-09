@@ -12,7 +12,8 @@
       "./worker-configuration.d.ts"
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@test/*": ["./test/*"]
     },
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"

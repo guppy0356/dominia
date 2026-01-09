@@ -57,11 +57,12 @@ Routes are organized using Hono's `app.route()` pattern for scalability and main
 src/
 ├── routes/
 │   └── {resource}/
-│       └── index.tsx     # Sub-app for each resource
+│       ├── index.tsx       # Sub-app for each resource
+│       └── index.test.ts   # Colocated integration tests
 ├── middleware/
-│   ├── renderer.tsx      # JSX renderer (global)
-│   └── auth.ts           # JWT auth configuration
-└── index.tsx             # Main app (mounts routes)
+│   ├── renderer.tsx        # JSX renderer (global)
+│   └── auth.ts             # JWT auth configuration
+└── index.tsx               # Main app (mounts routes)
 ```
 
 ### Sub-Apps Pattern
