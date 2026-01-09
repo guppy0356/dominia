@@ -42,10 +42,86 @@ Environment variables are defined and validated using **Zod** in `src/types.ts`.
 
 ## Hono App Structure
 
-* **Entry Point**: `src/index.tsx` exports the Hono app instance.
-* **SSR**: Uses `vite-ssr-components` with a custom `jsxRenderer` middleware defined in `src/renderer.tsx`.
-* **Middleware**: Protected routes utilize `jwk()` middleware for JWT validation.
+* **Entry Point**: `src/index.tsx` exports the Hono app instance and mounts route sub-apps.
+* **SSR**: Uses `vite-ssr-components` with a custom `jsxRenderer` middleware defined in `src/middleware/renderer.tsx`.
+* **Middleware**: Protected routes utilize `jwk()` middleware for JWT validation, configured in `src/middleware/auth.ts`.
 * **Dependency Injection**: The Database client is instantiated **per-request** via `database(c.env.DATABASE_URL)` to ensure the correct environment variables are used.
+
+## Routing Organization
+
+Routes are organized using Hono's `app.route()` pattern for scalability and maintainability.
+
+### Directory Structure
+
+```
+src/
+├── routes/
+│   └── {resource}/
+│       └── index.tsx     # Sub-app for each resource
+├── middleware/
+│   ├── renderer.tsx      # JSX renderer (global)
+│   └── auth.ts           # JWT auth configuration
+└── index.tsx             # Main app (mounts routes)
+```
+
+### Sub-Apps Pattern
+
+Each resource (e.g., `entries`, `users`) has its own **sub-app**:
+
+* **Location**: `src/routes/{resource}/index.tsx`
+* **Structure**: Exports a Hono instance with resource-specific routes
+* **Mounting**: Main app uses `app.route("/{resource}", subApp)` to mount
+
+**Example** (`src/routes/entries/index.tsx`):
+```typescript
+import { Hono } from "hono";
+import type { Bindings } from "@/types";
+import { createJwtMiddleware } from "@/middleware/auth";
+
+const app = new Hono<{ Bindings: Bindings }>();
+app.use(createJwtMiddleware());  // Resource-level middleware
+app.get("/", async (c) => { /* handler */ });
+export default app;
+```
+
+### Type Safety Requirements
+
+All sub-apps **must** declare the same type parameter as the main app:
+
+```typescript
+new Hono<{ Bindings: Bindings }>()
+```
+
+This ensures:
+* `c.env.DATABASE_URL` is properly typed as `string`
+* `c.env.JWKS_URI` is properly typed as `string | undefined`
+* Full type inference across all routes
+
+### Middleware Hierarchy
+
+Middleware is applied at three levels:
+
+1. **Global** (`src/index.tsx`): Applied to all routes
+   * Example: JSX renderer middleware
+2. **Resource-level** (sub-app): Applied to all routes within a resource
+   * Example: JWT authentication for `/entries/*`
+3. **Route-specific**: Applied to individual route handlers
+   * Use sparingly; prefer resource-level middleware
+
+### Adding New Routes
+
+To add a new resource:
+
+1. Create `src/routes/{resource}/index.tsx`
+2. Define a Hono sub-app with `new Hono<{ Bindings: Bindings }>()`
+3. Add route handlers and middleware
+4. Mount in `src/index.tsx`: `app.route("/{resource}", resourceApp)`
+
+**Benefits**:
+* Clear separation of concerns
+* Easy to locate and modify routes
+* Scalable for growing applications
+* Type-safe across all modules
 
 ## Database Schema Management
 

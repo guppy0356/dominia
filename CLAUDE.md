@@ -7,12 +7,17 @@
 
 ## File Structure
 src/
+├── routes/
+│   └── entries/
+│       └── index.tsx     # Entries routes sub-app (GET, POST, etc.)
+├── middleware/
+│   ├── renderer.tsx      # JSX Renderer middleware
+│   └── auth.ts           # JWT authentication config
 ├── db/
 │   ├── client.ts         # DB connection (Local/Remote auto-switch)
 │   ├── schema.ts         # Drizzle schema definition
 │   └── migrations/       # SQL migration files
-├── index.tsx             # Hono app entry & Routes
-├── renderer.tsx          # JSX Renderer middleware
+├── index.tsx             # Hono app entry (mounts routes)
 ├── types.ts              # Zod schemas & Env types
 └── style.css
 test/
@@ -40,9 +45,19 @@ Refer to `docs/` for complex logic details:
 - **Architecture**: `docs/architecture.md` (DB Connection Strategy, Dual Env Config)
 - **Testing**: `docs/testing.md` (Mocking strategy, Workers environment)
 
+## Routing Organization
+Routes are organized using Hono's `app.route()` pattern for scalability:
+- **Sub-apps**: Each resource (entries, users, etc.) has its own sub-app in `src/routes/{resource}/index.tsx`
+- **Type Safety**: All sub-apps use `new Hono<{ Bindings: Bindings }>()` for proper type inference
+- **Middleware**: Apply at different levels (global in `index.tsx`, resource-level in sub-apps)
+- **Adding Routes**:
+  1. Create `src/routes/{resource}/index.tsx` with a Hono sub-app
+  2. Mount in `src/index.tsx`: `app.route("/{resource}", resourceApp)`
+
 ## Development Rules
 1. **Lefthook & Git Hooks**:
    - Biome (Format/Lint) and Vitest run on commit/push.
    - **If `git commit` fails**: Read the error, **fix the code automatically**, and retry the commit.
 2. **Database**: Always use Drizzle Kit for schema changes.
 3. **Tests**: Use `npm test` to ensure DB isolation protocols are respected.
+4. **Routing**: Follow the established pattern in `src/routes/` for consistency.
