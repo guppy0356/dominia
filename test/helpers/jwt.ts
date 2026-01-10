@@ -1,12 +1,12 @@
 import type { JWK, JWTPayload } from "jose";
 import * as jose from "jose";
 
-export interface AuthTools {
+export interface JwtHelper {
   publicJwk: JWK;
   createToken: (payload?: JWTPayload) => Promise<string>;
 }
 
-export async function createAuthTools(): Promise<AuthTools> {
+export async function createJwtTestHelper(): Promise<JwtHelper> {
   const { privateKey, publicKey } = await jose.generateKeyPair("RS256");
 
   const publicJwk = await jose.exportJWK(publicKey);

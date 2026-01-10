@@ -1,5 +1,5 @@
 import { env, fetchMock } from "cloudflare:test";
-import { type AuthTools, createAuthTools } from "@test/helpers/jwt";
+import { createJwtTestHelper, type JwtHelper } from "@test/helpers/jwt";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import app from "@/index";
 
@@ -19,10 +19,10 @@ describe("GET /entries", () => {
   });
 
   describe("with valid authentication", () => {
-    let auth: AuthTools;
+    let jwtHelper: JwtHelper;
 
     beforeAll(async () => {
-      auth = await createAuthTools();
+      jwtHelper = await createJwtTestHelper();
     });
 
     beforeEach(() => {
@@ -33,7 +33,7 @@ describe("GET /entries", () => {
       fetchMock
         .get(TEST_JWKS_HOST)
         .intercept({ path: "/.well-known/jwks.json" })
-        .reply(200, { keys: [auth.publicJwk] });
+        .reply(200, { keys: [jwtHelper.publicJwk] });
     });
 
     afterEach(() => {
@@ -42,7 +42,7 @@ describe("GET /entries", () => {
     });
 
     it("should return 200 with valid JWT", async () => {
-      const token = await auth.createToken();
+      const token = await jwtHelper.createToken();
       const res = await app.request(
         "/entries",
         { headers: { Authorization: `Bearer ${token}` } },
