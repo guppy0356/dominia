@@ -38,7 +38,7 @@ Environment variables are defined and validated using **Zod** in `src/types.ts`.
 * **Type Generation**: `npm run cf-typegen` generates Cloudflare bindings types from `wrangler.jsonc`.
 * **Key Variables**:
     * `DATABASE_URL`: Postgres connection string (Required).
-    * `JWKS_URI`: JWT key set URI for authentication (Optional).
+    * `JWKS_URI`: JWT key set URI for authentication (Required).
 
 ## Hono App Structure
 
@@ -95,7 +95,7 @@ new Hono<{ Bindings: Bindings }>()
 
 This ensures:
 * `c.env.DATABASE_URL` is properly typed as `string`
-* `c.env.JWKS_URI` is properly typed as `string | undefined`
+* `c.env.JWKS_URI` is properly typed as `string`
 * Full type inference across all routes
 
 ### Middleware Hierarchy

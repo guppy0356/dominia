@@ -3,17 +3,10 @@ import { createJwtTestHelper, type JwtHelper } from "@test/helpers/jwt";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import app from "@/index";
 
-const TEST_JWKS_HOST = "https://test-jwks.local";
-
-const createTestEnv = () => ({
-  ...env,
-  JWKS_URI: `${TEST_JWKS_HOST}/.well-known/jwks.json`,
-});
-
 describe("GET /entries", () => {
   describe("without authentication", () => {
     it("should return 401 without authorization header", async () => {
-      const res = await app.request("/entries", {}, createTestEnv());
+      const res = await app.request("/entries", {}, env);
       expect(res.status).toBe(401);
     });
   });
@@ -30,9 +23,10 @@ describe("GET /entries", () => {
       fetchMock.disableNetConnect();
       fetchMock.enableNetConnect(/db\.localtest\.me:4444/);
 
+      const jwksUrl = new URL(env.JWKS_URI);
       fetchMock
-        .get(TEST_JWKS_HOST)
-        .intercept({ path: "/.well-known/jwks.json" })
+        .get(jwksUrl.origin)
+        .intercept({ path: jwksUrl.pathname })
         .reply(200, { keys: [jwtHelper.publicJwk] });
     });
 
@@ -46,7 +40,7 @@ describe("GET /entries", () => {
       const res = await app.request(
         "/entries",
         { headers: { Authorization: `Bearer ${token}` } },
-        createTestEnv(),
+        env,
       );
 
       expect(res.status).toBe(200);

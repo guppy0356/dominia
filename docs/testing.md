@@ -24,6 +24,14 @@ We use `fetchMock` to intercept external requests.
 Protected endpoints are tested using helper utilities in `test/helpers/jwt.ts`.
 * **Mechanism**: Creates RSA key pairs and signs valid JWTs for testing.
 * **JWKS**: The JWKS endpoint is mocked via `fetchMock` so the app can validate the test tokens without reaching out to a real provider.
+  * The mock is configured dynamically from `env.JWKS_URI` to ensure consistency with environment variables:
+    ```typescript
+    const jwksUrl = new URL(env.JWKS_URI);
+    fetchMock
+      .get(jwksUrl.origin)
+      .intercept({ path: jwksUrl.pathname })
+      .reply(200, { keys: [jwtHelper.publicJwk] });
+    ```
 
 ## Test Utilities & Scripts
 

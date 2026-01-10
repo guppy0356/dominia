@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const envSchema = z.object({
   DATABASE_URL: z.url(),
-  JWKS_URI: z.string().optional(),
+  JWKS_URI: z.url(),
 });
 
 export type Bindings = z.infer<typeof envSchema>;
